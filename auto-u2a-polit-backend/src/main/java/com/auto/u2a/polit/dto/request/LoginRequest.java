@@ -15,6 +15,9 @@ public class LoginRequest {
     @NotBlank(message = "密码不能为空")
     private String password;
     
+    @NotBlank(message = "租户ID不能为空")
+    private String tenantId;
+    
     private String captcha;
     
     private Boolean rememberMe = false;

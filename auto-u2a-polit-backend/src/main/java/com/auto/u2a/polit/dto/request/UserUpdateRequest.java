@@ -17,6 +17,6 @@ public class UserUpdateRequest {
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
     private String phone;
     
-    @Size(max = 50, message = "真实姓名长度不能超过50个字符")
-    private String realName;
+    @Size(max = 100, message = "显示名称长度不能超过100个字符")
+    private String displayName;
 }

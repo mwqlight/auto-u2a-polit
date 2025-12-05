@@ -34,10 +34,10 @@ public class UserCreateRequest {
     @Schema(description = "密码", example = "password123")
     private String password;
     
-    @NotBlank(message = "真实姓名不能为空")
-    @Size(max = 50, message = "真实姓名长度不能超过50个字符")
-    @Schema(description = "真实姓名", example = "张三", required = true)
-    private String realName;
+    @NotBlank(message = "显示名称不能为空")
+    @Size(max = 100, message = "显示名称长度不能超过100个字符")
+    @Schema(description = "显示名称", example = "张三", required = true)
+    private String displayName;
     
     @Size(max = 20, message = "手机号长度不能超过20个字符")
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")

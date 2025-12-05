@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
     @Query("SELECT u FROM User u WHERE " +
            "(:keyword IS NULL OR " +
            "u.username LIKE %:keyword% OR " +
-           "u.realName LIKE %:keyword% OR " +
+           "u.displayName LIKE %:keyword% OR " +
            "u.email LIKE %:keyword%)")
     Page<User> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
     

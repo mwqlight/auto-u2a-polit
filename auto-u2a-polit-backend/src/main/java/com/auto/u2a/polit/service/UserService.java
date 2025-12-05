@@ -21,17 +21,22 @@ public interface UserService extends UserDetailsService {
     /**
      * 更新用户
      */
-    UserResponse updateUser(Long id, UserUpdateRequest request);
+    UserResponse updateUser(UUID id, UserUpdateRequest request);
     
     /**
      * 根据ID获取用户
      */
-    UserResponse getUserById(Long id);
+    User getUserById(UUID id);
     
     /**
      * 根据用户名获取用户
      */
     User getUserByUsername(String username);
+    
+    /**
+     * 根据用户名和租户ID获取用户
+     */
+    User getUserByUsernameAndTenantId(String username, String tenantId);
     
     /**
      * 分页查询用户
@@ -41,22 +46,22 @@ public interface UserService extends UserDetailsService {
     /**
      * 删除用户
      */
-    void deleteUser(Long id);
+    void deleteUser(UUID id);
     
     /**
      * 启用用户
      */
-    void enableUser(Long id);
+    void enableUser(UUID id);
     
     /**
      * 禁用用户
      */
-    void disableUser(Long id);
+    void disableUser(UUID id);
     
     /**
      * 重置密码
      */
-    void resetPassword(Long id);
+    void resetPassword(UUID id);
     
     /**
      * 记录登录失败

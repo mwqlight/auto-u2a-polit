@@ -1,15 +1,22 @@
 # 企业级用户平台驾驶舱系统 - 应用配置
 
+server:
+  port: 8082
+  servlet:
+    context-path: /api
+
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: auto-u2a-polit-backend
   
   # 数据源配置
   datasource:
-    url: jdbc:postgresql://localhost:5432/auto_u2a_polit
+    url: jdbc:mysql://localhost:3306/auto_u2a_polit?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
     username: root
     password: root
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 20
       minimum-idle: 5
@@ -20,16 +27,15 @@ spring:
   # JPA配置
   jpa:
     hibernate:
-      ddl-auto: validate
-    show-sql: false
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
         jdbc:
           lob:
             non_contextual_creation: true
-        default_schema: public
   
   # Redis配置
   redis:
@@ -45,23 +51,13 @@ spring:
         max-wait: 3000
     timeout: 5000
   
-  # Kafka配置
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    consumer:
-      group-id: auto-u2a-polit-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
   
   # 安全配置
   security:
     oauth2:
       authorization-server:
-        issuer: http://localhost:8080
+        issuer: http://localhost:8082
   
   # 缓存配置
   cache:

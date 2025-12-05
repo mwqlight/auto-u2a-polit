@@ -8,6 +8,7 @@ import com.auto.u2a.polit.entity.Tenant;
 import com.auto.u2a.polit.entity.User;
 import com.auto.u2a.polit.repository.TenantRepository;
 import com.auto.u2a.polit.repository.UserRepository;
+import com.auto.u2a.polit.repository.OrganizationUnitRepository;
 import com.auto.u2a.polit.service.IdentityManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class IdentityManagementServiceImpl implements IdentityManagementService 
     
     private final UserRepository userRepository;
     private final TenantRepository tenantRepository;
+    private final OrganizationUnitRepository organizationUnitRepository;
     private final PasswordEncoder passwordEncoder;
     
     @Override
@@ -275,32 +277,169 @@ public class IdentityManagementServiceImpl implements IdentityManagementService 
     
     @Override
     public OrganizationUnit createOrganizationUnit(OrganizationUnit orgUnit, String tenantId) {
-        // TODO: 实现组织单元创建逻辑
-        throw new UnsupportedOperationException("组织架构管理功能待实现");
+        log.info("创建组织单元，租户ID: {}, 组织代码: {}", tenantId, orgUnit.getCode());
+        
+        // 检查组织代码是否唯一
+        if (organizationUnitRepository.existsByTenantIdAndCode(tenantId, orgUnit.getCode())) {
+            throw new RuntimeException("组织代码已存在: " + orgUnit.getCode());
+        }
+        
+        // 设置租户ID
+        orgUnit.setTenantId(tenantId);
+        
+        // 处理父组织
+        if (orgUnit.getParentId() != null) {
+            // 检查父组织是否存在
+            OrganizationUnit parentOrg = organizationUnitRepository.findById(UUID.fromString(orgUnit.getParentId()))
+                    .orElseThrow(() -> new RuntimeException("父组织不存在: " + orgUnit.getParentId()));
+            
+            // 设置层级路径和深度
+            orgUnit.setHierarchyPath(parentOrg.getHierarchyPath() + "/" + orgUnit.getCode());
+            orgUnit.setDepth(parentOrg.getDepth() + 1);
+        } else {
+            // 根组织
+            orgUnit.setHierarchyPath(orgUnit.getCode());
+            orgUnit.setDepth(0);
+        }
+        
+        OrganizationUnit savedOrgUnit = organizationUnitRepository.save(orgUnit);
+        log.info("组织单元创建成功，组织ID: {}", savedOrgUnit.getId());
+        
+        return savedOrgUnit;
     }
     
     @Override
     public OrganizationUnit updateOrganizationUnit(String orgUnitId, OrganizationUnit orgUnit, String tenantId) {
-        // TODO: 实现组织单元更新逻辑
-        throw new UnsupportedOperationException("组织架构管理功能待实现");
+        log.info("更新组织单元信息，组织ID: {}, 租户ID: {}", orgUnitId, tenantId);
+        
+        OrganizationUnit existingOrgUnit = organizationUnitRepository.findById(UUID.fromString(orgUnitId))
+                .orElseThrow(() -> new RuntimeException("组织单元不存在: " + orgUnitId));
+        
+        // 检查租户一致性
+        if (!existingOrgUnit.getTenantId().equals(tenantId)) {
+            throw new RuntimeException("组织单元不属于该租户");
+        }
+        
+        // 更新基本信息
+        if (orgUnit.getName() != null) {
+            existingOrgUnit.setName(orgUnit.getName());
+        }
+        if (orgUnit.getDescription() != null) {
+            existingOrgUnit.setDescription(orgUnit.getDescription());
+        }
+        if (orgUnit.getType() != null) {
+            existingOrgUnit.setType(orgUnit.getType());
+        }
+        if (orgUnit.getStatus() != null) {
+            existingOrgUnit.setStatus(orgUnit.getStatus());
+        }
+        if (orgUnit.getAttributes() != null) {
+            existingOrgUnit.setAttributes(orgUnit.getAttributes());
+        }
+        if (orgUnit.getManagerId() != null) {
+            existingOrgUnit.setManagerId(orgUnit.getManagerId());
+        }
+        if (orgUnit.getMetadata() != null) {
+            existingOrgUnit.setMetadata(orgUnit.getMetadata());
+        }
+        
+        OrganizationUnit updatedOrgUnit = organizationUnitRepository.save(existingOrgUnit);
+        log.info("组织单元信息更新成功，组织ID: {}", updatedOrgUnit.getId());
+        
+        return updatedOrgUnit;
     }
     
     @Override
     public List<OrganizationUnit> getOrganizationTree(String tenantId, String rootId) {
-        // TODO: 实现组织架构树查询逻辑
-        throw new UnsupportedOperationException("组织架构管理功能待实现");
+        log.debug("查询组织架构树，租户ID: {}, 根组织ID: {}", tenantId, rootId);
+        
+        List<OrganizationUnit> orgUnits;
+        if (rootId == null) {
+            // 查询所有根组织
+            orgUnits = organizationUnitRepository.findByTenantIdAndParentIdIsNull(tenantId);
+        } else {
+            // 查询指定根组织及其子组织
+            OrganizationUnit rootOrg = organizationUnitRepository.findById(UUID.fromString(rootId))
+                    .orElseThrow(() -> new RuntimeException("根组织不存在: " + rootId));
+            orgUnits = organizationUnitRepository.findByTenantIdAndHierarchyPathStartingWith(tenantId, rootOrg.getHierarchyPath());
+        }
+        
+        // 构建树形结构
+        return buildOrganizationTree(orgUnits);
     }
     
     @Override
     public void moveOrganizationUnit(String orgUnitId, String newParentId, String tenantId) {
-        // TODO: 实现组织单元移动逻辑
-        throw new UnsupportedOperationException("组织架构管理功能待实现");
+        log.info("移动组织单元，组织ID: {}, 新父组织ID: {}, 租户ID: {}", orgUnitId, newParentId, tenantId);
+        
+        OrganizationUnit orgUnit = organizationUnitRepository.findById(UUID.fromString(orgUnitId))
+                .orElseThrow(() -> new RuntimeException("组织单元不存在: " + orgUnitId));
+        
+        // 检查租户一致性
+        if (!orgUnit.getTenantId().equals(tenantId)) {
+            throw new RuntimeException("组织单元不属于该租户");
+        }
+        
+        // 处理新父组织
+        OrganizationUnit newParentOrg = null;
+        String newPath = orgUnit.getCode();
+        int newDepth = 0;
+        
+        if (newParentId != null) {
+            newParentOrg = organizationUnitRepository.findById(UUID.fromString(newParentId))
+                    .orElseThrow(() -> new RuntimeException("新父组织不存在: " + newParentId));
+            
+            // 检查租户一致性
+            if (!newParentOrg.getTenantId().equals(tenantId)) {
+                throw new RuntimeException("新父组织不属于该租户");
+            }
+            
+            // 检查是否移动到自己的子组织下
+            if (orgUnit.getHierarchyPath().startsWith(newParentOrg.getHierarchyPath() + "/")) {
+                throw new RuntimeException("不能将组织单元移动到自己的子组织下");
+            }
+            
+            newPath = newParentOrg.getHierarchyPath() + "/" + orgUnit.getCode();
+            newDepth = newParentOrg.getDepth() + 1;
+        }
+        
+        // 更新组织单元的父ID、路径和深度
+        String oldPath = orgUnit.getHierarchyPath();
+        orgUnit.setParentId(newParentId);
+        orgUnit.setHierarchyPath(newPath);
+        orgUnit.setDepth(newDepth);
+        organizationUnitRepository.save(orgUnit);
+        
+        // 更新所有子组织的路径
+        organizationUnitRepository.updateHierarchyPathByTenantIdAndPathStartingWith(tenantId, oldPath + "/", newPath + "/");
+        
+        log.info("组织单元移动成功，组织ID: {}", orgUnitId);
     }
     
     @Override
     public List<User> getUsersByOrganizationUnit(String orgUnitId, String tenantId, boolean includeChildren) {
+        log.debug("查询组织单元用户，组织ID: {}, 租户ID: {}, 包含子组织: {}", orgUnitId, tenantId, includeChildren);
+        
+        OrganizationUnit orgUnit = organizationUnitRepository.findById(UUID.fromString(orgUnitId))
+                .orElseThrow(() -> new RuntimeException("组织单元不存在: " + orgUnitId));
+        
+        // 检查租户一致性
+        if (!orgUnit.getTenantId().equals(tenantId)) {
+            throw new RuntimeException("组织单元不属于该租户");
+        }
+        
         // TODO: 实现组织单元用户查询逻辑
-        throw new UnsupportedOperationException("组织架构管理功能待实现");
+        // 需要在User实体中添加组织单元关联，或者创建中间表
+        throw new UnsupportedOperationException("组织单元用户查询功能待实现");
+    }
+    
+    /**
+     * 构建组织架构树
+     */
+    private List<OrganizationUnit> buildOrganizationTree(List<OrganizationUnit> orgUnits) {
+        // TODO: 实现组织架构树构建逻辑
+        // 需要根据parentId和hierarchyPath构建树形结构
+        return orgUnits;
     }
     
     // ==================== 数据同步 ====================
