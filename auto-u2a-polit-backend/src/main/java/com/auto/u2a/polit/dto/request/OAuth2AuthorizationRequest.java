@@ -27,7 +27,7 @@ public class OAuth2AuthorizationRequest {
     @Schema(description = "重定向URI", example = "https://example.com/callback")
     private String redirectUri;
     
-    @Schema(description = "授权范围", example = "["openid", "profile", "email"]")
+    @Schema(description = "授权范围", example = "[\"openid\", \"profile\", \"email\"]")
     private Set<String> scope;
     
     @Schema(description = "状态参数", example = "random_state_string")
@@ -56,4 +56,57 @@ public class OAuth2AuthorizationRequest {
     
     @Schema(description = "UI区域设置")
     private String uiLocales;
+    
+    // 手动添加getter方法
+    public String getClientId() {
+        return clientId;
+    }
+    
+    public String getResponseType() {
+        return responseType;
+    }
+    
+    public String getRedirectUri() {
+        return redirectUri;
+    }
+    
+    public Set<String> getScope() {
+        return scope;
+    }
+    
+    public String getState() {
+        return state;
+    }
+    
+    public String getNonce() {
+        return nonce;
+    }
+    
+    public String getCodeChallenge() {
+        return codeChallenge;
+    }
+    
+    public String getCodeChallengeMethod() {
+        return codeChallengeMethod;
+    }
+    
+    public String getTenantId() {
+        return tenantId;
+    }
+    
+    public String getDisplay() {
+        return display;
+    }
+    
+    public String getPrompt() {
+        return prompt;
+    }
+    
+    public Integer getMaxAge() {
+        return maxAge;
+    }
+    
+    public String getUiLocales() {
+        return uiLocales;
+    }
 }

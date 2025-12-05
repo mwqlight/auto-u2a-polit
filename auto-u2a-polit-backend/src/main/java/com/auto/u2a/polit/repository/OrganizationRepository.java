@@ -20,7 +20,7 @@ import java.util.UUID;
  * @version 1.0.0
  */
 @Repository
-public interface OrganizationRepository extends JpaRepository<Organization, UUID>, JpaSpecificationExecutor<Organization> {
+public interface OrganizationRepository extends JpaRepository<Organization, UUID> {
     
     /**
      * 根据租户ID和父组织ID查询子组织列表

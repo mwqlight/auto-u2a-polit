@@ -21,12 +21,36 @@ public class BatchUserImportRequest {
     @Schema(description = "用户列表", required = true)
     private List<UserCreateRequest> users;
     
+    public List<UserCreateRequest> getUsers() {
+        return users;
+    }
+    
+    public void setUsers(List<UserCreateRequest> users) {
+        this.users = users;
+    }
+    
     @NotBlank(message = "租户ID不能为空")
     @Schema(description = "租户ID", example = "tenant001", required = true)
     private String tenantId;
     
+    public String getTenantId() {
+        return tenantId;
+    }
+    
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+    
     @Schema(description = "是否覆盖已存在的用户", example = "false")
     private boolean overwriteExisting = false;
+    
+    public boolean isOverwriteExisting() {
+        return overwriteExisting;
+    }
+    
+    public void setOverwriteExisting(boolean overwriteExisting) {
+        this.overwriteExisting = overwriteExisting;
+    }
     
     @Schema(description = "是否发送欢迎邮件", example = "true")
     private boolean sendWelcomeEmail = true;

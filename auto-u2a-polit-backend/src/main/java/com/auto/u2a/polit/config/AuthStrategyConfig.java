@@ -16,6 +16,9 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class AuthStrategyConfig {
     
+    // 手动添加log变量
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthStrategyConfig.class);
+    
     private final PasswordAuthStrategy passwordAuthStrategy;
     private final OAuth2AuthStrategy oauth2AuthStrategy;
     private final SMSAuthStrategy smsAuthStrategy;

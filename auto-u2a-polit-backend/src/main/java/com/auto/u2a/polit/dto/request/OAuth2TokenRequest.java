@@ -14,6 +14,47 @@ import lombok.Data;
 @Schema(description = "OAuth2令牌请求")
 public class OAuth2TokenRequest {
     
+    // 手动添加getter方法
+    public String getCode() {
+        return code;
+    }
+    
+    public String getGrantType() {
+        return grantType;
+    }
+    
+    public String getTenantId() {
+        return tenantId;
+    }
+    
+    public String getRedirectUri() {
+        return redirectUri;
+    }
+    
+    public String getClientId() {
+        return clientId;
+    }
+    
+    public String getClientSecret() {
+        return clientSecret;
+    }
+    
+    public String getScope() {
+        return scope;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+    
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+    
     @NotBlank(message = "授权类型不能为空")
     @Schema(description = "授权类型", example = "authorization_code", required = true)
     private String grantType;

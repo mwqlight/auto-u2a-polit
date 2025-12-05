@@ -47,4 +47,9 @@ public class SAMLRequest {
     
     @Schema(description = "租户ID", example = "tenant001")
     private String tenantId;
+    
+    // 手动添加getter方法
+    public String getIssuer() {
+        return issuer;
+    }
 }

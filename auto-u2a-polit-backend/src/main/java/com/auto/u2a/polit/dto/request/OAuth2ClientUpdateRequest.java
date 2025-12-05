@@ -12,9 +12,10 @@ import java.util.Set;
  * @author Auto U2A Polit Team
  * @version 1.0.0
  */
-@Data
 @Schema(description = "OAuth2客户端更新请求")
 public class OAuth2ClientUpdateRequest {
+    
+    // 手动添加getter方法
     
     @Size(max = 100, message = "客户端名称长度不能超过100个字符")
     @Schema(description = "客户端名称", example = "更新后的应用名称")
@@ -56,4 +57,56 @@ public class OAuth2ClientUpdateRequest {
     
     @Schema(description = "客户端元数据")
     private String clientMetadata;
+    
+    public String getClientName() {
+        return clientName;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public Set<String> getRedirectUris() {
+        return redirectUris;
+    }
+    
+    public Set<String> getGrantTypes() {
+        return grantTypes;
+    }
+    
+    public Set<String> getScopes() {
+        return scopes;
+    }
+    
+    public String getStatus() {
+        return status;
+    }
+    
+    public Integer getAccessTokenValidity() {
+        return accessTokenValidity;
+    }
+    
+    public Integer getRefreshTokenValidity() {
+        return refreshTokenValidity;
+    }
+    
+    public Boolean getAutoApprove() {
+        return autoApprove;
+    }
+    
+    public String getContactName() {
+        return contactName;
+    }
+    
+    public String getContactEmail() {
+        return contactEmail;
+    }
+    
+    public String getContactPhone() {
+        return contactPhone;
+    }
+    
+    public String getClientMetadata() {
+        return clientMetadata;
+    }
 }

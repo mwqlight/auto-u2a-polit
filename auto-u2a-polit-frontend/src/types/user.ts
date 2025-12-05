@@ -11,7 +11,7 @@ export enum UserStatus {
  * 用户信息
  */
 export interface User {
-  id: number
+  id: string
   username: string
   email: string
   phone?: string

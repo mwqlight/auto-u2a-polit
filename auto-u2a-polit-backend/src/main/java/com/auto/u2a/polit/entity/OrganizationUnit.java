@@ -70,7 +70,7 @@ public class OrganizationUnit {
     
     /** 组织属性（JSON格式） */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "attributes", columnDefinition = "jsonb")
+    @Column(name = "attributes", columnDefinition = "json")
     private String attributes;
     
     /** 组织状态：ACTIVE-激活，INACTIVE-未激活 */
@@ -94,7 +94,7 @@ public class OrganizationUnit {
     
     /** 元数据信息 */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "metadata", columnDefinition = "jsonb")
+    @Column(name = "metadata", columnDefinition = "json")
     private String metadata;
     
     public enum OrganizationType {

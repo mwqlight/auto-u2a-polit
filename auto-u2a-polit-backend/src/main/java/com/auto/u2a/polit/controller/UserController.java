@@ -83,7 +83,7 @@ public class UserController {
     @PreAuthorize("hasPermission('user:delete')")
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return ResponseEntity.ok(ApiResponse.success("用户删除成功"));
+        return ResponseEntity.ok(ApiResponse.success("用户删除成功", null));
     }
     
     /**
@@ -93,7 +93,7 @@ public class UserController {
     @PreAuthorize("hasPermission('user:update')")
     public ResponseEntity<ApiResponse<Void>> enableUser(@PathVariable Long id) {
         userService.enableUser(id);
-        return ResponseEntity.ok(ApiResponse.success("用户启用成功"));
+        return ResponseEntity.ok(ApiResponse.success("用户启用成功", null));
     }
     
     /**
@@ -103,7 +103,7 @@ public class UserController {
     @PreAuthorize("hasPermission('user:update')")
     public ResponseEntity<ApiResponse<Void>> disableUser(@PathVariable Long id) {
         userService.disableUser(id);
-        return ResponseEntity.ok(ApiResponse.success("用户禁用成功"));
+        return ResponseEntity.ok(ApiResponse.success("用户禁用成功", null));
     }
     
     /**
@@ -113,6 +113,6 @@ public class UserController {
     @PreAuthorize("hasPermission('user:update')")
     public ResponseEntity<ApiResponse<Void>> resetPassword(@PathVariable Long id) {
         userService.resetPassword(id);
-        return ResponseEntity.ok(ApiResponse.success("密码重置成功"));
+        return ResponseEntity.ok(ApiResponse.success("密码重置成功", null));
     }
 }

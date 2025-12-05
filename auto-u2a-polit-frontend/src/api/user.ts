@@ -15,55 +15,55 @@ export const userApi = {
     direction?: string
     keyword?: string
   }) {
-    return request.get<UserListResponse>('/v1/users', { params })
+    return request.get<UserListResponse>('/api/v1/identity/users', { params })
   },
 
   /**
    * 获取用户详情
    */
-  getUser(id: number) {
-    return request.get<User>(`/v1/users/${id}`)
+  getUser(id: string) {
+    return request.get<User>(`/api/v1/identity/users/${id}`)
   },
 
   /**
    * 创建用户
    */
   createUser(data: UserCreateRequest) {
-    return request.post<User>('/v1/users', data)
+    return request.post<User>('/api/v1/identity/users', data)
   },
 
   /**
    * 更新用户
    */
-  updateUser(id: number, data: UserUpdateRequest) {
-    return request.put<User>(`/v1/users/${id}`, data)
+  updateUser(id: string, data: UserUpdateRequest) {
+    return request.put<User>(`/api/v1/identity/users/${id}`, data)
   },
 
   /**
    * 删除用户
    */
-  deleteUser(id: number) {
-    return request.delete(`/v1/users/${id}`)
+  deleteUser(id: string) {
+    return request.delete(`/api/v1/identity/users/${id}`)
   },
 
   /**
    * 启用用户
    */
-  enableUser(id: number) {
-    return request.put(`/v1/users/${id}/enable`)
+  enableUser(id: string) {
+    return request.put(`/api/v1/identity/users/${id}/enable`)
   },
 
   /**
    * 禁用用户
    */
-  disableUser(id: number) {
-    return request.put(`/v1/users/${id}/disable`)
+  disableUser(id: string) {
+    return request.put(`/api/v1/identity/users/${id}/disable`)
   },
 
   /**
    * 重置密码
    */
-  resetPassword(id: number) {
-    return request.put(`/v1/users/${id}/reset-password`)
+  resetPassword(id: string) {
+    return request.put(`/api/v1/identity/users/${id}/reset-password`)
   }
 }

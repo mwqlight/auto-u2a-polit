@@ -2,7 +2,12 @@ package com.auto.u2a.polit.service.impl;
 
 import com.auto.u2a.polit.dto.request.UserCreateRequest;
 import com.auto.u2a.polit.dto.request.UserUpdateRequest;
+import com.auto.u2a.polit.dto.request.OrganizationCreateRequest;
 import com.auto.u2a.polit.dto.response.UserResponse;
+import com.auto.u2a.polit.dto.response.OrganizationResponse;
+import java.util.UUID;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.auto.u2a.polit.entity.OrganizationUnit;
 import com.auto.u2a.polit.entity.Tenant;
 import com.auto.u2a.polit.entity.User;
@@ -10,15 +15,20 @@ import com.auto.u2a.polit.repository.TenantRepository;
 import com.auto.u2a.polit.repository.UserRepository;
 import com.auto.u2a.polit.service.IdentityManagementService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.persistence.criteria.Predicate;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.auto.u2a.polit.exception.BusinessException;
+import com.auto.u2a.polit.entity.User;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,10 +40,12 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  */
 @Service
-@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class IdentityManagementServiceImpl implements IdentityManagementService {
+
+    private final ObjectMapper objectMapper;
+    private static final Logger log = LoggerFactory.getLogger(IdentityManagementServiceImpl.class);
     
     private final UserRepository userRepository;
     private final TenantRepository tenantRepository;
@@ -80,7 +92,14 @@ public class IdentityManagementServiceImpl implements IdentityManagementService 
         
         // 设置用户档案信息
         if (request.getProfile() != null) {
-            user.setProfile(request.getProfile());
+            try {
+                // 将Map类型转换为String类型
+                String profileJson = objectMapper.writeValueAsString(request.getProfile());
+                user.setProfile(profileJson);
+            } catch (JsonProcessingException e) {
+                log.error("用户档案信息转换失败: {}", e.getMessage(), e);
+                throw new BusinessException("用户档案信息转换失败");
+            }
         }
         
         // 保存用户
@@ -122,7 +141,13 @@ public class IdentityManagementServiceImpl implements IdentityManagementService 
         
         // 更新用户档案
         if (request.getProfile() != null) {
-            user.setProfile(request.getProfile());
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                String profileJson = objectMapper.writeValueAsString(request.getProfile());
+                user.setProfile(profileJson);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("用户档案转换为JSON失败: " + e.getMessage(), e);
+            }
         }
         
         // 更新状态
@@ -274,6 +299,36 @@ public class IdentityManagementServiceImpl implements IdentityManagementService 
     // ==================== 组织架构管理 ====================
     
     @Override
+    public OrganizationResponse createOrganization(OrganizationCreateRequest request) {
+        // TODO: 实现组织创建逻辑
+        throw new UnsupportedOperationException("组织创建功能待实现");
+    }
+    
+    @Override
+    public OrganizationResponse updateOrganization(UUID orgId, OrganizationCreateRequest request) {
+        // TODO: 实现组织更新逻辑
+        throw new UnsupportedOperationException("组织更新功能待实现");
+    }
+    
+    @Override
+    public void deleteOrganization(UUID orgId, String tenantId) {
+        // TODO: 实现组织删除逻辑
+        throw new UnsupportedOperationException("组织删除功能待实现");
+    }
+    
+    @Override
+    public OrganizationResponse getOrganization(UUID orgId, String tenantId) {
+        // TODO: 实现组织详情查询逻辑
+        throw new UnsupportedOperationException("组织详情查询功能待实现");
+    }
+    
+    @Override
+    public OrganizationResponse moveOrganization(UUID orgId, String tenantId, String newParentId) {
+        // TODO: 实现组织移动逻辑
+        throw new UnsupportedOperationException("组织移动功能待实现");
+    }
+    
+    @Override
     public OrganizationUnit createOrganizationUnit(OrganizationUnit orgUnit, String tenantId) {
         // TODO: 实现组织单元创建逻辑
         throw new UnsupportedOperationException("组织架构管理功能待实现");
@@ -286,7 +341,7 @@ public class IdentityManagementServiceImpl implements IdentityManagementService 
     }
     
     @Override
-    public List<OrganizationUnit> getOrganizationTree(String tenantId, String rootId) {
+    public List<OrganizationResponse> getOrganizationTree(String tenantId, String rootId) {
         // TODO: 实现组织架构树查询逻辑
         throw new UnsupportedOperationException("组织架构管理功能待实现");
     }
@@ -345,7 +400,7 @@ public class IdentityManagementServiceImpl implements IdentityManagementService 
             tenant.setStatus(Tenant.TenantStatus.ACTIVE);
         }
         if (tenant.getType() == null) {
-            tenant.setType(Tenant.TenantType.ENTERPRISE);
+            tenant.setType(Tenant.TenantType.DEFAULT);
         }
         
         Tenant savedTenant = tenantRepository.save(tenant);
@@ -415,15 +470,15 @@ public class IdentityManagementServiceImpl implements IdentityManagementService 
     
     private UserResponse convertToResponse(User user) {
         UserResponse response = new UserResponse();
-        response.setId(user.getId().toString());
+        response.setId(user.getId());
         response.setTenantId(user.getTenantId());
         response.setUsername(user.getUsername());
         response.setEmail(user.getEmail());
         response.setPhone(user.getPhone());
         response.setDisplayName(user.getDisplayName());
         response.setAvatarUrl(user.getAvatarUrl());
-        response.setStatus(user.getStatus().name());
-        response.setType(user.getType().name());
+        response.setStatus(user.getStatus() != null ? user.getStatus().name() : null);
+        response.setType(user.getType() != null ? user.getType().name() : null);
         response.setCreatedAt(user.getCreatedAt());
         response.setUpdatedAt(user.getUpdatedAt());
         response.setLastLoginAt(user.getLastLoginAt());

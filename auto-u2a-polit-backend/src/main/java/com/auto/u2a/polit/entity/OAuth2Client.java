@@ -89,9 +89,156 @@ public class OAuth2Client extends BaseEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     private String jwkSet;
     
+    @Column(name = "contact_name", length = 100)
+    private String contactName;
+    
+    @Column(name = "contact_email", length = 100)
+    private String contactEmail;
+    
+    @Column(name = "contact_phone", length = 20)
+    private String contactPhone;
+
+    // 手动添加getClientStatus()方法
+    public ClientStatus getClientStatus() {
+        return clientStatus;
+    }
+    
     @Column(name = "metadata")
     @JdbcTypeCode(SqlTypes.JSON)
     private String metadata;
+    
+    // 手动添加getter和setter方法
+    public String getClientId() {
+        return clientId;
+    }
+    
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+    
+    public String getClientSecret() {
+        return clientSecret;
+    }
+    
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+    
+    public String getClientName() {
+        return clientName;
+    }
+    
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public Set<String> getRedirectUris() {
+        return redirectUris;
+    }
+    
+    public void setRedirectUris(Set<String> redirectUris) {
+        this.redirectUris = redirectUris;
+    }
+    
+    public Set<String> getGrantTypes() {
+        return grantTypes;
+    }
+    
+    public void setGrantTypes(Set<String> grantTypes) {
+        this.grantTypes = grantTypes;
+    }
+    
+    public Set<String> getScopes() {
+        return scopes;
+    }
+    
+    public void setScopes(Set<String> scopes) {
+        this.scopes = scopes;
+    }
+    
+    public ClientType getClientType() {
+        return clientType;
+    }
+    
+    public void setClientType(ClientType clientType) {
+        this.clientType = clientType;
+    }
+    
+    public Integer getAccessTokenValidity() {
+        return tokenExpiresIn;
+    }
+    
+    public void setAccessTokenValidity(Integer accessTokenValidity) {
+        this.tokenExpiresIn = accessTokenValidity;
+    }
+    
+    public Integer getRefreshTokenValidity() {
+        return refreshTokenExpiresIn;
+    }
+    
+    public void setRefreshTokenValidity(Integer refreshTokenValidity) {
+        this.refreshTokenExpiresIn = refreshTokenValidity;
+    }
+    
+    public Boolean getAutoApprove() {
+        return requireConsent != null ? !requireConsent : false;
+    }
+    
+    public void setAutoApprove(Boolean autoApprove) {
+        this.requireConsent = autoApprove != null ? !autoApprove : true;
+    }
+    
+    public void setStatus(String status) {
+        this.clientStatus = ClientStatus.valueOf(status);
+    }
+    
+    public String getTenantId() {
+        return tenantId;
+    }
+    
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+    
+    public String getContactName() {
+        return contactName;
+    }
+    
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+    
+    public String getContactEmail() {
+        return contactEmail;
+    }
+    
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+    
+    public String getContactPhone() {
+        return contactPhone;
+    }
+    
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+    
+    public String getClientMetadata() {
+        return metadata;
+    }
+    
+    public void setClientMetadata(String clientMetadata) {
+        this.metadata = clientMetadata;
+    }
     
     /**
      * 客户端类型枚举

@@ -49,12 +49,12 @@ public class AuthPolicy {
     
     /** 策略规则（JSON格式） */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "rules", columnDefinition = "jsonb")
+    @Column(name = "rules", columnDefinition = "json")
     private String rules;
     
     /** 策略作用域 */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "scopes", columnDefinition = "jsonb")
+    @Column(name = "scopes", columnDefinition = "json")
     private String scopes;
     
     /** 策略状态：ACTIVE-激活，INACTIVE-未激活 */
@@ -90,7 +90,7 @@ public class AuthPolicy {
     
     /** 元数据信息 */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "metadata", columnDefinition = "jsonb")
+    @Column(name = "metadata", columnDefinition = "json")
     private String metadata;
     
     public enum PolicyType {

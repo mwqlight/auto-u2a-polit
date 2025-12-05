@@ -39,4 +39,9 @@ public class SAMLSignOutRequest {
     
     @Schema(description = "租户ID", example = "tenant001")
     private String tenantId;
+    
+    // 手动添加getter方法
+    public String getSessionIndex() {
+        return sessionIndex;
+    }
 }

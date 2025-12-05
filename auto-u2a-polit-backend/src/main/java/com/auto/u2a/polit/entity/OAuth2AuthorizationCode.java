@@ -78,6 +78,57 @@ public class OAuth2AuthorizationCode {
         return LocalDateTime.now().isAfter(expiresAt);
     }
     
+    // 手动添加setter方法
+    public void setCode(String code) {
+        this.code = code;
+    }
+    
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+    
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+    
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
+    }
+    
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+    
+    public void setScope(String scope) {
+        // 这里需要将字符串转换为Set<String>类型
+        this.scopes = Set.of(scope.split(" "));
+    }
+    
+    public void setExpiresAt(LocalDateTime expiresAt) {
+        this.expiresAt = expiresAt;
+    }
+    
+    public void setUsed(boolean used) {
+        this.used = used;
+    }
+    
+    // 手动添加getter方法
+    public boolean isUsed() {
+        return used;
+    }
+    
+    public UUID getUserId() {
+        return userId;
+    }
+    
+    public String getScope() {
+        return scopes != null ? String.join(" ", scopes) : "";
+    }
+    
+    public Set<String> getScopes() {
+        return scopes;
+    }
+    
     /**
      * 检查授权码是否有效（未使用且未过期）
      */
