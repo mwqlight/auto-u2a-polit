@@ -27,7 +27,7 @@ public class OAuth2AuthorizationRequest {
     @Schema(description = "重定向URI", example = "https://example.com/callback")
     private String redirectUri;
     
-    @Schema(description = "授权范围", example = "["openid", "profile", "email"]")
+    @Schema(description = "授权范围", example = "[\"openid\", \"profile\", \"email\"]")
     private Set<String> scope;
     
     @Schema(description = "状态参数", example = "random_state_string")

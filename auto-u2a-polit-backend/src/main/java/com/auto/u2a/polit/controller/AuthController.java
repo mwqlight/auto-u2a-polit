@@ -1,8 +1,10 @@
 package com.auto.u2a.polit.controller;
 
 import com.auto.u2a.polit.dto.request.LoginRequest;
+import com.auto.u2a.polit.dto.request.UserCreateRequest;
 import com.auto.u2a.polit.dto.response.ApiResponse;
 import com.auto.u2a.polit.dto.response.LoginResponse;
+import com.auto.u2a.polit.dto.response.UserResponse;
 import com.auto.u2a.polit.entity.User;
 import com.auto.u2a.polit.enums.AuthProtocol;
 import com.auto.u2a.polit.security.AuthContext;
@@ -197,6 +199,21 @@ public class AuthController {
             return ApiResponse.success(user);
         }
         return ApiResponse.error(401, "未认证");
+    }
+
+    /**
+     * 用户注册接口
+     */
+    @PostMapping("/register")
+    public ApiResponse<UserResponse> register(@Valid @RequestBody UserCreateRequest request) {
+        try {
+            UserResponse user = userService.createUser(request);
+            log.info("用户注册成功: {}", request.getUsername());
+            return ApiResponse.success("注册成功", user);
+        } catch (Exception e) {
+            log.warn("用户注册失败: {} - {}", request.getUsername(), e.getMessage());
+            return ApiResponse.error(400, e.getMessage());
+        }
     }
 
     @PostMapping("/refresh")

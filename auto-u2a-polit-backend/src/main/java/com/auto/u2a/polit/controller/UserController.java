@@ -4,7 +4,9 @@ import com.auto.u2a.polit.dto.request.UserCreateRequest;
 import com.auto.u2a.polit.dto.request.UserUpdateRequest;
 import com.auto.u2a.polit.dto.response.ApiResponse;
 import com.auto.u2a.polit.dto.response.UserResponse;
+import com.auto.u2a.polit.entity.User;
 import com.auto.u2a.polit.service.UserService;
+import java.util.UUID;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,7 +43,7 @@ public class UserController {
     @PutMapping("/{id}")
     @PreAuthorize("hasPermission('user:update')")
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(
-            @PathVariable Long id, 
+            @PathVariable UUID id, 
             @Valid @RequestBody UserUpdateRequest request) {
         UserResponse user = userService.updateUser(id, request);
         return ResponseEntity.ok(ApiResponse.success("用户更新成功", user));
@@ -52,9 +54,9 @@ public class UserController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasPermission('user:read')")
-    public ResponseEntity<ApiResponse<UserResponse>> getUser(@PathVariable Long id) {
-        UserResponse user = userService.getUserById(id);
-        return ResponseEntity.ok(ApiResponse.success("获取用户成功", user));
+    public ResponseEntity<ApiResponse<UserResponse>> getUser(@PathVariable UUID id) {
+        User user = userService.getUserById(id);
+        return ResponseEntity.ok(ApiResponse.success("获取用户成功", UserResponse.fromEntity(user)));
     }
     
     /**
@@ -81,7 +83,7 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasPermission('user:delete')")
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.ok(ApiResponse.success("用户删除成功"));
     }
@@ -91,7 +93,7 @@ public class UserController {
      */
     @PutMapping("/{id}/enable")
     @PreAuthorize("hasPermission('user:update')")
-    public ResponseEntity<ApiResponse<Void>> enableUser(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> enableUser(@PathVariable UUID id) {
         userService.enableUser(id);
         return ResponseEntity.ok(ApiResponse.success("用户启用成功"));
     }
@@ -101,7 +103,7 @@ public class UserController {
      */
     @PutMapping("/{id}/disable")
     @PreAuthorize("hasPermission('user:update')")
-    public ResponseEntity<ApiResponse<Void>> disableUser(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> disableUser(@PathVariable UUID id) {
         userService.disableUser(id);
         return ResponseEntity.ok(ApiResponse.success("用户禁用成功"));
     }
@@ -111,7 +113,7 @@ public class UserController {
      */
     @PutMapping("/{id}/reset-password")
     @PreAuthorize("hasPermission('user:update')")
-    public ResponseEntity<ApiResponse<Void>> resetPassword(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> resetPassword(@PathVariable UUID id) {
         userService.resetPassword(id);
         return ResponseEntity.ok(ApiResponse.success("密码重置成功"));
     }

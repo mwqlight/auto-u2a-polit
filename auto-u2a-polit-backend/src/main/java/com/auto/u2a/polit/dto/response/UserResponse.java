@@ -4,6 +4,7 @@ import com.auto.u2a.polit.entity.User;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * 用户响应DTO
@@ -11,15 +12,18 @@ import java.time.LocalDateTime;
 @Data
 public class UserResponse {
     
-    private Long id;
+    private UUID id;
     private String username;
     private String email;
     private String phone;
-    private String realName;
+    private String displayName;
     private User.UserStatus status;
+    private User.UserType type;
     private String tenantId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime lastLoginAt;
+    private String lastLoginIp;
     
     public static UserResponse fromEntity(User user) {
         UserResponse response = new UserResponse();
@@ -27,11 +31,14 @@ public class UserResponse {
         response.setUsername(user.getUsername());
         response.setEmail(user.getEmail());
         response.setPhone(user.getPhone());
-        response.setRealName(user.getRealName());
+        response.setDisplayName(user.getDisplayName());
         response.setStatus(user.getStatus());
+        response.setType(user.getType());
         response.setTenantId(user.getTenantId());
         response.setCreatedAt(user.getCreatedAt());
         response.setUpdatedAt(user.getUpdatedAt());
+        response.setLastLoginAt(user.getLastLoginAt());
+        response.setLastLoginIp(user.getLastLoginIp());
         return response;
     }
 }

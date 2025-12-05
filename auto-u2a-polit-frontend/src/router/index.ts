@@ -18,6 +18,15 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/register',
+    name: 'Register',
+    component: () => import('@/views/auth/Register.vue'),
+    meta: {
+      title: '注册',
+      requiresAuth: false
+    }
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/views/dashboard/index.vue'),
@@ -49,7 +58,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'organizations',
         name: 'OrganizationManagement',
-        component: () => import('@/views/identity/OrganizationManagement.vue'),
+        component: () => import('@/views/identity/OrganizationTree.vue'),
         meta: {
           title: '组织架构',
           requiresAuth: true

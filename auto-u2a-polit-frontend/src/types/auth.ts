@@ -3,6 +3,7 @@
 export interface LoginParams {
   username: string
   password: string
+  tenantId: string
   captcha?: string
   rememberMe?: boolean
 }

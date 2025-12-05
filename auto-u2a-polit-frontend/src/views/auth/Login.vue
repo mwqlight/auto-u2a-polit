@@ -70,6 +70,20 @@
           >
             <!-- 用户名密码认证 -->
             <template v-if="selectedProtocol.code === 'PASSWORD'">
+              <n-form-item path="tenantId">
+                <n-input
+                  v-model:value="formData.tenantId"
+                  placeholder="请输入租户ID"
+                  :input-props="{ autocomplete: 'organization' }"
+                >
+                  <template #prefix>
+                    <n-icon>
+                      <BuildingIcon />
+                    </n-icon>
+                  </template>
+                </n-input>
+              </n-form-item>
+
               <n-form-item path="username">
                 <n-input
                   v-model:value="formData.username"
@@ -234,7 +248,8 @@ import {
   QrcodeIcon,
   FingerprintIcon,
   MailIcon,
-  KeyIcon
+  KeyIcon,
+  BuildingIcon
 } from '@vicons/fa'
 import { useAuthStore } from '@/stores/auth'
 import { LoginParams } from '@/types/auth'
@@ -276,6 +291,7 @@ const oauth2Providers = ref([
 const formData = reactive({
   username: '',
   password: '',
+  tenantId: '',
   phone: '',
   code: '',
   captcha: '',
@@ -285,6 +301,10 @@ const formData = reactive({
 
 // 表单验证规则
 const rules = {
+  tenantId: [
+    { required: true, message: '请输入租户ID', trigger: 'blur' },
+    { min: 3, max: 20, message: '租户ID长度在 3 到 20 个字符', trigger: 'blur' }
+  ],
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
     { min: 3, max: 20, message: '用户名长度在 3 到 20 个字符', trigger: 'blur' }
@@ -377,6 +397,7 @@ const handleLogin = async () => {
       case 'PASSWORD':
         loginParams.username = formData.username
         loginParams.password = formData.password
+        loginParams.tenantId = formData.tenantId
         if (showCaptcha.value) loginParams.captcha = formData.captcha
         break
       case 'SMS':

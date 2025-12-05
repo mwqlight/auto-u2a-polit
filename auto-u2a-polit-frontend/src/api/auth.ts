@@ -66,5 +66,10 @@ export const authApi = {
   // OAuth2回调
   oauth2Callback: (provider: string, code: string): Promise<any> => {
     return request.get(`/auth/oauth2/${provider}/callback?code=${code}`)
+  },
+  
+  // 用户注册
+  register: (params: { username: string; email: string; phone: string; password: string; smsCode: string; displayName: string }): Promise<any> => {
+    return request.post('/auth/register', params)
   }
 }

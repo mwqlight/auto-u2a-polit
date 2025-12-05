@@ -43,10 +43,10 @@ public class PasswordAuthStrategy implements AuthStrategy {
         LoginRequest loginRequest = (LoginRequest) request;
         
         try {
-            // 使用Spring Security的认证管理器进行认证
+            // 使用Spring Security的认证管理器进行认证，传递用户名和租户ID作为认证主体
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    loginRequest.getUsername(), 
+                    loginRequest.getUsername() + ":" + loginRequest.getTenantId(), 
                     loginRequest.getPassword()
                 )
             );
@@ -54,7 +54,7 @@ public class PasswordAuthStrategy implements AuthStrategy {
             // 记录登录成功
             userService.recordLoginSuccess(loginRequest.getUsername());
             
-            log.info("用户名密码认证成功: {}", loginRequest.getUsername());
+            log.info("用户名密码认证成功: {} (租户: {})", loginRequest.getUsername(), loginRequest.getTenantId());
             
             return authentication;
             
@@ -62,15 +62,19 @@ public class PasswordAuthStrategy implements AuthStrategy {
             // 记录登录失败
             userService.recordLoginFailure(loginRequest.getUsername());
             
-            log.warn("用户名密码认证失败: {} - {}", loginRequest.getUsername(), e.getMessage());
+            log.warn("用户名密码认证失败: {} (租户: {}) - {}", loginRequest.getUsername(), loginRequest.getTenantId(), e.getMessage());
             throw e;
         }
     }
 
     @Override
     public User getAuthenticatedUser(Authentication authentication) {
-        String username = authentication.getName();
-        return userService.getUserByUsername(username);
+        String principal = authentication.getName();
+        // 从认证主体中分离用户名和租户ID
+        String[] parts = principal.split(":");
+        String username = parts[0];
+        String tenantId = parts[1];
+        return userService.getUserByUsernameAndTenantId(username, tenantId);
     }
 
     @Override
