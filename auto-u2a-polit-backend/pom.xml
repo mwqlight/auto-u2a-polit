@@ -28,7 +28,6 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.30</lombok.version>
         <jwt.version>0.11.5</jwt.version>
-        <postgresql.version>42.6.0</postgresql.version>
         <redis.version>3.1.2</redis.version>
         <kafka.version>3.6.0</kafka.version>
         <resilience4j.version>2.1.0</resilience4j.version>
@@ -83,9 +82,9 @@
 
         <!-- Database -->
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgresql.version}</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate.orm</groupId>
