@@ -1,0 +1,149 @@
+# 企业级用户平台驾驶舱系统 - 应用配置
+
+spring:
+  application:
+    name: auto-u2a-polit-backend
+  
+  # 数据源配置
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auto_u2a_polit
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        default_schema: public
+  
+  # Redis配置
+  redis:
+    host: localhost
+    port: 6379
+    password: 
+    database: 0
+    lettuce:
+      pool:
+        max-active: 20
+        max-idle: 10
+        min-idle: 5
+        max-wait: 3000
+    timeout: 5000
+  
+  # Kafka配置
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: auto-u2a-polit-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+  
+  # 安全配置
+  security:
+    oauth2:
+      authorization-server:
+        issuer: http://localhost:8080
+  
+  # 缓存配置
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000
+      cache-null-values: false
+  
+  # 监控配置
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics,prometheus
+    endpoint:
+      health:
+        show-details: always
+        show-components: always
+    metrics:
+      export:
+        prometheus:
+          enabled: true
+
+# 应用配置
+app:
+  name: auto-u2a-polit
+  version: 1.0.0
+  
+  # JWT配置
+  jwt:
+    secret: ${JWT_SECRET:auto-u2a-polit-secret-key-2024}
+    expiration: 86400000
+    issuer: auto-u2a-polit
+    
+  # 多租户配置
+  multi-tenant:
+    enabled: true
+    default-tenant: default
+    
+  # 安全配置
+  security:
+    bcrypt-strength: 12
+    max-login-attempts: 5
+    lockout-duration: 1800000
+    session-timeout: 3600000
+    
+  # 系统配置
+  system:
+    admin:
+      username: admin
+      password: ${ADMIN_PASSWORD:Admin123!}
+      email: admin@auto-u2a-polit.com
+    
+  # 日志配置
+  logging:
+    level:
+      com.auto.u2a.polit: DEBUG
+      org.springframework.security: DEBUG
+      org.springframework.web: DEBUG
+    pattern:
+      console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+      file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file:
+      name: logs/auto-u2a-polit.log
+      max-size: 10MB
+      max-history: 30
+
+# Resilience4j配置
+resilience4j:
+  circuitbreaker:
+    instances:
+      userService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 2s
+  retry:
+    instances:
+      userService:
+        maxAttempts: 3
+        waitDuration: 500ms

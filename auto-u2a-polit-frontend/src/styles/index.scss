@@ -1,0 +1,224 @@
+// 全局样式入口文件
+
+// 导入变量和混合
+@import 'variables';
+@import 'mixins';
+
+// 重置样式
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $text-color;
+  background-color: $bg-color;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  height: 100%;
+  overflow: hidden;
+}
+
+// 链接样式
+a {
+  color: $primary-color;
+  text-decoration: none;
+  
+  &:hover {
+    color: $primary-color-hover;
+    text-decoration: underline;
+  }
+}
+
+// 滚动条样式
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: $scrollbar-track-color;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $scrollbar-thumb-color;
+  border-radius: 3px;
+  
+  &:hover {
+    background: $scrollbar-thumb-hover-color;
+  }
+}
+
+// 文本选择样式
+::selection {
+  background: $primary-color;
+  color: white;
+}
+
+// 工具类
+.text-primary {
+  color: $primary-color !important;
+}
+
+.text-success {
+  color: $success-color !important;
+}
+
+.text-warning {
+  color: $warning-color !important;
+}
+
+.text-error {
+  color: $error-color !important;
+}
+
+.bg-primary {
+  background-color: $primary-color !important;
+}
+
+.bg-success {
+  background-color: $success-color !important;
+}
+
+.bg-warning {
+  background-color: $warning-color !important;
+}
+
+.bg-error {
+  background-color: $error-color !important;
+}
+
+// 动画类
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+// 布局类
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// 响应式工具类
+@include respond-to('sm') {
+  .hidden-sm {
+    display: none !important;
+  }
+}
+
+@include respond-to('md') {
+  .hidden-md {
+    display: none !important;
+  }
+}
+
+@include respond-to('lg') {
+  .hidden-lg {
+    display: none !important;
+  }
+}
+
+// 高科技特效类
+.quantum-glow {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, $primary-color, $accent-color);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.3;
+    filter: blur(8px);
+  }
+}
+
+.hologram-effect {
+  background: linear-gradient(135deg, rgba($primary-color, 0.1), rgba($accent-color, 0.1));
+  border: 1px solid rgba($primary-color, 0.3);
+  backdrop-filter: blur(10px);
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba($primary-color, 0.4), transparent);
+    animation: hologram-scan 3s infinite;
+  }
+}
+
+@keyframes hologram-scan {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.particle-network {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba($primary-color, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba($accent-color, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba($primary-color, 0.1) 0%, transparent 50%);
+    animation: particle-float 20s infinite linear;
+  }
+}
+
+@keyframes particle-float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(360deg);
+  }
+}
