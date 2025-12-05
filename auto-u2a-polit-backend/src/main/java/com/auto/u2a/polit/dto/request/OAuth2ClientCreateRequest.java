@@ -61,4 +61,61 @@ public class OAuth2ClientCreateRequest {
     
     @Schema(description = "客户端元数据")
     private String clientMetadata;
+    
+    // 手动添加getter方法
+    public String getClientName() {
+        return clientName;
+    }
+    
+    public String getTenantId() {
+        return tenantId;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public Set<String> getRedirectUris() {
+        return redirectUris;
+    }
+    
+    public Set<String> getGrantTypes() {
+        return grantTypes;
+    }
+    
+    public Set<String> getScopes() {
+        return scopes;
+    }
+    
+    public String getClientType() {
+        return clientType;
+    }
+    
+    public Integer getAccessTokenValidity() {
+        return accessTokenValidity;
+    }
+    
+    public Integer getRefreshTokenValidity() {
+        return refreshTokenValidity;
+    }
+    
+    public Boolean getAutoApprove() {
+        return autoApprove;
+    }
+    
+    public String getContactName() {
+        return contactName;
+    }
+    
+    public String getContactEmail() {
+        return contactEmail;
+    }
+    
+    public String getContactPhone() {
+        return contactPhone;
+    }
+    
+    public String getClientMetadata() {
+        return clientMetadata;
+    }
 }

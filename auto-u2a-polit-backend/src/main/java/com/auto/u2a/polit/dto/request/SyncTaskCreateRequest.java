@@ -13,7 +13,7 @@ import java.util.Map;
  * @author Auto U2A Polit Team
  * @version 1.0.0
  */
-@Data
+
 @Schema(description = "数据同步任务创建请求")
 public class SyncTaskCreateRequest {
     
@@ -31,6 +31,39 @@ public class SyncTaskCreateRequest {
     
     @Schema(description = "同步配置")
     private Map<String, Object> config;
+    
+    // getter and setter methods
+    public String getSourceTenantId() {
+        return sourceTenantId;
+    }
+    
+    public void setSourceTenantId(String sourceTenantId) {
+        this.sourceTenantId = sourceTenantId;
+    }
+    
+    public String getTargetTenantId() {
+        return targetTenantId;
+    }
+    
+    public void setTargetTenantId(String targetTenantId) {
+        this.targetTenantId = targetTenantId;
+    }
+    
+    public String getSyncType() {
+        return syncType;
+    }
+    
+    public void setSyncType(String syncType) {
+        this.syncType = syncType;
+    }
+    
+    public Map<String, Object> getConfig() {
+        return config;
+    }
+    
+    public void setConfig(Map<String, Object> config) {
+        this.config = config;
+    }
     
     @Schema(description = "是否增量同步", example = "true")
     private boolean incremental = true;

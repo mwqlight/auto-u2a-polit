@@ -10,7 +10,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,13 +24,13 @@ import java.util.Map;
  * @author Auto U2A Polit Team
  * @version 1.0.0
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Tag(name = "认证中心", description = "全协议认证中心管理接口")
 public class AuthenticationController {
     
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
     private final AuthenticationService authenticationService;
     
     // ==================== OAuth2.0 认证端点 ====================
@@ -93,7 +94,7 @@ public class AuthenticationController {
     
     @PostMapping("/oauth2/revoke")
     @Operation(summary = "撤销访问令牌", description = "使指定的访问令牌失效")
-    public ResponseEntity<ApiResponse<Void>> revokeToken(
+    public ResponseEntity<ApiResponse<String>> revokeToken(
             @Parameter(description = "访问令牌") @RequestParam String token) {
         
         log.info("撤销访问令牌: token={}", token);
@@ -246,7 +247,7 @@ public class AuthenticationController {
     
     @PostMapping("/saml/slo")
     @Operation(summary = "SAML单点登出响应", description = "处理SAML单点登出响应")
-    public ResponseEntity<ApiResponse<Void>> processSAMLSignOutResponse(
+    public ResponseEntity<ApiResponse<String>> processSAMLSignOutResponse(
             @Parameter(description = "SAML登出响应参数") @Valid @RequestBody SAMLSignOutResponse response) {
         
         log.info("处理SAML单点登出响应");
@@ -313,7 +314,7 @@ public class AuthenticationController {
     
     @DeleteMapping("/clients/{clientId}")
     @Operation(summary = "删除OAuth2客户端", description = "删除指定的OAuth2客户端")
-    public ResponseEntity<ApiResponse<Void>> deleteClient(
+    public ResponseEntity<ApiResponse<String>> deleteClient(
             @Parameter(description = "客户端ID") @PathVariable String clientId) {
         
         log.info("删除OAuth2客户端: clientId={}", clientId);
@@ -363,7 +364,7 @@ public class AuthenticationController {
     
     @PostMapping("/sessions/user/{userId}/logout")
     @Operation(summary = "强制登出用户", description = "强制登出指定用户的会话")
-    public ResponseEntity<ApiResponse<Void>> forceLogoutUser(
+    public ResponseEntity<ApiResponse<String>> forceLogoutUser(
             @Parameter(description = "用户ID") @PathVariable String userId,
             @Parameter(description = "会话ID") @RequestParam(required = false) String sessionId) {
         
@@ -380,7 +381,7 @@ public class AuthenticationController {
     
     @PostMapping("/sessions/client/{clientId}/logout")
     @Operation(summary = "强制登出客户端", description = "强制登出指定客户端的所有会话")
-    public ResponseEntity<ApiResponse<Void>> forceLogoutClient(
+    public ResponseEntity<ApiResponse<String>> forceLogoutClient(
             @Parameter(description = "客户端ID") @PathVariable String clientId) {
         
         log.info("强制登出客户端: clientId={}", clientId);

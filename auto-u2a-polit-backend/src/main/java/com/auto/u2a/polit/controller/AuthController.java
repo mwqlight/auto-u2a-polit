@@ -11,6 +11,8 @@ import com.auto.u2a.polit.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
+    private final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final AuthContext authContext;
     private final JwtUtil jwtUtil;
     private final UserService userService;
@@ -210,17 +213,13 @@ public class AuthController {
                 // 生成新的令牌
                 String newToken = jwtUtil.generateToken(username);
                 
-                LoginResponse response = new LoginResponse();
-                response.setToken(newToken);
-                response.setTokenType("Bearer");
-                response.setExpiresIn(jwtUtil.getExpirationDateFromToken(newToken).getTime());
-                response.setUsername(username);
+                LoginResponse response = new LoginResponse(newToken, "Bearer", jwtUtil.getExpirationDateFromToken(newToken).getTime(), username);
                 
                 return ApiResponse.success("令牌刷新成功", response);
             }
         }
         
-        return ApiResponse.error(401, "令牌无效");
+        return ApiResponse.<LoginResponse>error(401, "令牌无效");
     }
     
     /**

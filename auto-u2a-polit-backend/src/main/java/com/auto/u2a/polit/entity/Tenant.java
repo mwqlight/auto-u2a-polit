@@ -47,7 +47,7 @@ public class Tenant {
     
     /** 租户配置信息 */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "config", columnDefinition = "jsonb")
+    @Column(name = "config", columnDefinition = "json")
     private String config;
     
     /** 租户状态：ACTIVE-激活，INACTIVE-未激活，SUSPENDED-暂停 */
@@ -69,12 +69,120 @@ public class Tenant {
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
     
+    /** 租户类型 */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 50)
+    private TenantType type = TenantType.DEFAULT;
+    
     /** 元数据信息 */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "metadata", columnDefinition = "jsonb")
+    @Column(name = "metadata", columnDefinition = "json")
     private String metadata;
+    
+    // 手动添加getType()方法
+    public TenantType getType() {
+        return type;
+    }
+    
+    // 手动添加setType()方法
+    public void setType(TenantType type) {
+        this.type = type;
+    }
     
     public enum TenantStatus {
         ACTIVE, INACTIVE, SUSPENDED
+    }
+    
+    public enum TenantType {
+        ENTERPRISE, PERSONAL, DEFAULT
+    }
+    
+    // 手动添加所有必要的getter和setter方法
+    public UUID getId() {
+        return id;
+    }
+    
+    public void setId(UUID id) {
+        this.id = id;
+    }
+    
+    public String getCode() {
+        return code;
+    }
+    
+    public void setCode(String code) {
+        this.code = code;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getDomain() {
+        return domain;
+    }
+    
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public String getConfig() {
+        return config;
+    }
+    
+    public void setConfig(String config) {
+        this.config = config;
+    }
+    
+    public TenantStatus getStatus() {
+        return status;
+    }
+    
+    public void setStatus(TenantStatus status) {
+        this.status = status;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+    
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
+    }
+    
+    public void setExpiresAt(LocalDateTime expiresAt) {
+        this.expiresAt = expiresAt;
+    }
+    
+    public String getMetadata() {
+        return metadata;
+    }
+    
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
     }
 }

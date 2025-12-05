@@ -2,7 +2,10 @@ package com.auto.u2a.polit.service;
 
 import com.auto.u2a.polit.dto.request.UserCreateRequest;
 import com.auto.u2a.polit.dto.request.UserUpdateRequest;
+import com.auto.u2a.polit.dto.request.OrganizationCreateRequest;
 import com.auto.u2a.polit.dto.response.UserResponse;
+import com.auto.u2a.polit.dto.response.OrganizationResponse;
+import java.util.UUID;
 import com.auto.u2a.polit.entity.OrganizationUnit;
 import com.auto.u2a.polit.entity.Tenant;
 import com.auto.u2a.polit.entity.User;
@@ -84,6 +87,50 @@ public interface IdentityManagementService {
     // ==================== 组织架构管理 ====================
     
     /**
+     * 创建组织
+     * 
+     * @param request 组织创建请求
+     * @return 创建的组织
+     */
+    OrganizationResponse createOrganization(OrganizationCreateRequest request);
+    
+    /**
+     * 更新组织
+     * 
+     * @param orgId 组织ID
+     * @param request 组织更新请求
+     * @return 更新后的组织
+     */
+    OrganizationResponse updateOrganization(UUID orgId, OrganizationCreateRequest request);
+    
+    /**
+     * 删除组织
+     * 
+     * @param orgId 组织ID
+     * @param tenantId 租户ID
+     */
+    void deleteOrganization(UUID orgId, String tenantId);
+    
+    /**
+     * 获取组织详情
+     * 
+     * @param orgId 组织ID
+     * @param tenantId 租户ID
+     * @return 组织响应
+     */
+    OrganizationResponse getOrganization(UUID orgId, String tenantId);
+    
+    /**
+     * 移动组织
+     * 
+     * @param orgId 组织ID
+     * @param tenantId 租户ID
+     * @param newParentId 新的父组织ID
+     * @return 组织响应
+     */
+    OrganizationResponse moveOrganization(UUID orgId, String tenantId, String newParentId);
+    
+    /**
      * 创建组织单元
      * 
      * @param orgUnit 组织单元
@@ -109,7 +156,7 @@ public interface IdentityManagementService {
      * @param rootId 根节点ID（可选）
      * @return 组织架构树
      */
-    List<OrganizationUnit> getOrganizationTree(String tenantId, String rootId);
+    List<OrganizationResponse> getOrganizationTree(String tenantId, String rootId);
     
     /**
      * 移动组织单元

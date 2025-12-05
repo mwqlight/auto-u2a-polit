@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse updateUser(Long id, UserUpdateRequest request) {
-        User user = getUserById(id);
+        User user = findUserById(id);
         
         if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
             if (userRepository.existsByEmail(request.getEmail())) {
@@ -92,18 +93,18 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {
-        User user = userRepository.findById(id)
+        UUID uuid = UUID.fromString(id.toString());
+        User user = userRepository.findById(uuid)
                 .orElseThrow(() -> new RuntimeException("用户不存在: " + id));
         return UserResponse.fromEntity(user);
     }
     
-    @Override
-    @Transactional(readOnly = true)
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("用户不存在: " + username));
+    private User findUserById(Long id) {
+        UUID uuid = UUID.fromString(id.toString());
+        return userRepository.findById(uuid)
+                .orElseThrow(() -> new RuntimeException("用户不存在: " + id));
     }
-
+    
     @Override
     @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
@@ -131,14 +132,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(Long id) {
-        User user = getUserById(id);
+        User user = findUserById(id);
         userRepository.delete(user);
     }
 
     @Override
     @Transactional
     public void enableUser(Long id) {
-        User user = getUserById(id);
+        User user = findUserById(id);
         user.setStatus(User.UserStatus.ACTIVE);
         userRepository.save(user);
     }
@@ -146,15 +147,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void disableUser(Long id) {
-        User user = getUserById(id);
-        user.setStatus(User.UserStatus.DISABLED);
+        User user = findUserById(id);
+        user.setStatus(User.UserStatus.INACTIVE);
         userRepository.save(user);
     }
 
     @Override
     @Transactional
     public void resetPassword(Long id) {
-        User user = getUserById(id);
+        User user = findUserById(id);
         // 默认重置密码为"123456"
         user.setPassword(passwordEncoder.encode("123456"));
         userRepository.save(user);
@@ -166,10 +167,10 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOpt = userRepository.findByUsername(username);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            user.setLoginAttempts(user.getLoginAttempts() + 1);
+            user.setFailedLoginCount(user.getFailedLoginCount() + 1);
             
             // 如果登录失败次数超过5次，锁定账户30分钟
-            if (user.getLoginAttempts() >= 5) {
+            if (user.getFailedLoginCount() >= 5) {
                 user.setLockedUntil(LocalDateTime.now().plusMinutes(30));
                 user.setStatus(User.UserStatus.LOCKED);
             }
@@ -184,7 +185,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOpt = userRepository.findByUsername(username);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            user.setLoginAttempts(0);
+            user.setFailedLoginCount(0);
             user.setLockedUntil(null);
             user.setLastLoginAt(LocalDateTime.now());
             

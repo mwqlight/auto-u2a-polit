@@ -29,6 +29,14 @@ public class OrganizationCreateRequest {
     @Schema(description = "组织名称", example = "技术研发部", required = true)
     private String name;
     
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     @Size(max = 500, message = "组织描述长度不能超过500个字符")
     @Schema(description = "组织描述", example = "负责公司技术研发工作")
     private String description;

@@ -70,12 +70,12 @@ public class UserSession {
     
     /** 会话上下文信息（JSON格式） */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "context", columnDefinition = "jsonb")
+    @Column(name = "context", columnDefinition = "json")
     private String context;
     
     /** 元数据信息 */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "metadata", columnDefinition = "jsonb")
+    @Column(name = "metadata", columnDefinition = "json")
     private String metadata;
     
     public enum SessionStatus {

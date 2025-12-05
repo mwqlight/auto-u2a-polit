@@ -7,7 +7,8 @@ import com.auto.u2a.polit.enums.AuthProtocol;
 import com.auto.u2a.polit.service.UserService;
 import com.auto.u2a.polit.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,10 +20,11 @@ import java.util.Map;
 /**
  * 短信验证码认证策略
  */
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SMSAuthStrategy implements AuthStrategy {
+    
+    private static final Logger log = LoggerFactory.getLogger(SMSAuthStrategy.class);
     
     private final JwtUtil jwtUtil;
     private final UserService userService;

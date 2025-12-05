@@ -5,6 +5,7 @@ import com.auto.u2a.polit.dto.response.OAuth2TokenResponse;
 import com.auto.u2a.polit.entity.OAuth2AccessToken;
 import com.auto.u2a.polit.entity.OAuth2AuthorizationCode;
 import com.auto.u2a.polit.entity.OAuth2Client;
+import com.auto.u2a.polit.entity.OAuth2Client.ClientStatus;
 import com.auto.u2a.polit.repository.OAuth2AccessTokenRepository;
 import com.auto.u2a.polit.repository.OAuth2AuthorizationCodeRepository;
 import com.auto.u2a.polit.repository.OAuth2ClientRepository;
@@ -29,6 +30,9 @@ import java.util.*;
 @RequiredArgsConstructor
 @Transactional
 public class AuthenticationServiceImpl implements AuthenticationService {
+    
+    // 手动添加log变量
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthenticationServiceImpl.class);
     
     private final OAuth2ClientRepository oauth2ClientRepository;
     private final OAuth2AuthorizationCodeRepository authorizationCodeRepository;
@@ -57,7 +61,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         OAuth2AuthorizationCode code = new OAuth2AuthorizationCode();
         code.setCode(authorizationCode);
         code.setClientId(client.getClientId());
-        code.setUserId("user_id_placeholder"); // 实际应用中需要从认证上下文获取
+        code.setUserId(UUID.randomUUID()); // 实际应用中需要从认证上下文获取
         code.setTenantId(request.getTenantId());
         code.setRedirectUri(request.getRedirectUri());
         code.setScope(String.join(" ", request.getScope()));
@@ -97,7 +101,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authorizationCodeRepository.save(code);
         
         // 生成访问令牌
-        return generateTokenResponse(client, code.getUserId(), code.getScope());
+        return generateTokenResponse(client, code.getUserId().toString(), String.join(" ", code.getScope()));
     }
     
     @Override
@@ -113,7 +117,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         
         // 生成访问令牌（无用户上下文）
-        return generateTokenResponse(client, null, request.getScope());
+        return generateTokenResponse(client, null, String.join(" ", request.getScope()));
     }
     
     @Override
@@ -127,7 +131,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String userId = authenticateUser(request.getUsername(), request.getPassword());
         
         // 生成访问令牌
-        return generateTokenResponse(client, userId, request.getScope());
+        return generateTokenResponse(client, userId, String.join(" ", request.getScope()));
     }
     
     @Override
@@ -135,7 +139,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.info("刷新令牌: refreshToken={}", request.getRefreshToken());
         
         // 查找刷新令牌
-        OAuth2AccessToken oldToken = accessTokenRepository.findByRefreshToken(request.getRefreshToken())
+        OAuth2AccessToken oldToken = accessTokenRepository.findByRefreshTokenValue(request.getRefreshToken())
                 .orElseThrow(() -> new RuntimeException("无效的刷新令牌"));
         
         if (oldToken.isRefreshTokenExpired()) {
@@ -146,7 +150,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         OAuth2Client client = validateClient(request.getClientId(), request.getTenantId());
         
         // 生成新的访问令牌
-        OAuth2TokenResponse newToken = generateTokenResponse(client, oldToken.getUserId(), oldToken.getScope());
+        OAuth2TokenResponse newToken = generateTokenResponse(client, oldToken.getUserIdAsString(), oldToken.getScope());
         
         // 使旧令牌失效
         oldToken.setRevoked(true);
@@ -171,7 +175,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String userId = "user_id_placeholder";
         
         // 生成访问令牌（无刷新令牌）
-        return generateTokenResponse(client, userId, request.getScope());
+        return generateTokenResponse(client, userId, String.join(" ", request.getScope()));
     }
     
     @Override
@@ -325,10 +329,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         client.setClientSecret(passwordEncoder.encode(clientSecret));
         client.setClientName(request.getClientName());
         client.setDescription(request.getDescription());
-        client.setRedirectUris(String.join(",", request.getRedirectUris()));
-        client.setGrantTypes(String.join(",", request.getGrantTypes()));
-        client.setScopes(String.join(",", request.getScopes()));
-        client.setClientType(request.getClientType());
+        client.setRedirectUris(request.getRedirectUris());
+        client.setGrantTypes(request.getGrantTypes());
+        client.setScopes(request.getScopes());
+        client.setClientType(OAuth2Client.ClientType.valueOf(request.getClientType()));
         client.setAccessTokenValidity(request.getAccessTokenValidity());
         client.setRefreshTokenValidity(request.getRefreshTokenValidity());
         client.setAutoApprove(request.getAutoApprove());
@@ -361,13 +365,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             client.setDescription(request.getDescription());
         }
         if (request.getRedirectUris() != null) {
-            client.setRedirectUris(String.join(",", request.getRedirectUris()));
+            client.setRedirectUris(request.getRedirectUris());
         }
         if (request.getGrantTypes() != null) {
-            client.setGrantTypes(String.join(",", request.getGrantTypes()));
+            client.setGrantTypes(request.getGrantTypes());
         }
         if (request.getScopes() != null) {
-            client.setScopes(String.join(",", request.getScopes()));
+            client.setScopes(request.getScopes());
         }
         if (request.getStatus() != null) {
             client.setStatus(request.getStatus());
@@ -488,7 +492,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         OAuth2Client client = oauth2ClientRepository.findByClientId(clientId)
                 .orElseThrow(() -> new RuntimeException("无效的客户端"));
         
-        if (!"ACTIVE".equals(client.getStatus())) {
+        if (!ClientStatus.ACTIVE.equals(client.getClientStatus())) {
             throw new RuntimeException("客户端状态异常");
         }
         
@@ -506,7 +510,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
     
     private void validateResponseType(OAuth2Client client, String responseType) {
-        Set<String> allowedGrantTypes = Set.of(client.getGrantTypes().split(","));
+        // 将Set<String>转换为逗号分隔的字符串
+        String grantTypesString = String.join(",", client.getGrantTypes());
+        Set<String> allowedGrantTypes = Set.of(grantTypesString.split(","));
         
         if ("code".equals(responseType) && !allowedGrantTypes.contains("authorization_code")) {
             throw new RuntimeException("客户端不支持授权码授权");
@@ -541,7 +547,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         token.setTokenValue(accessToken);
         token.setRefreshToken(refreshToken);
         token.setClientId(client.getClientId());
-        token.setUserId(userId);
+        // 将String类型的userId转换为UUID类型
+        token.setUserId(userId != null ? UUID.fromString(userId) : null);
         token.setTenantId(client.getTenantId());
         token.setScope(scope);
         token.setExpiresAt(expiresAt);

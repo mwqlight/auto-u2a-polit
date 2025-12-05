@@ -1,13 +1,14 @@
 package com.auto.u2a.polit.security.aspect;
 
-import com.auto.u2a.polit.security.SecurityContext;
+import com.auto.u2a.polit.security.AuthContext;
 import com.auto.u2a.polit.security.annotation.RequiresPermission;
 import com.auto.u2a.polit.security.annotation.RequiresRole;
 import com.auto.u2a.polit.service.PermissionService;
 import com.auto.u2a.polit.service.RoleService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -21,20 +22,20 @@ import java.lang.reflect.Method;
  */
 @Aspect
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class PermissionAspect {
+    private static final Logger log = LoggerFactory.getLogger(PermissionAspect.class);
     
     private final PermissionService permissionService;
     private final RoleService roleService;
-    private final SecurityContext securityContext;
+    private final AuthContext authContext;
     
     /**
      * 权限注解切面
      */
     @Around("@annotation(requiresPermission)")
     public Object checkPermission(ProceedingJoinPoint joinPoint, RequiresPermission requiresPermission) throws Throwable {
-        Long userId = securityContext.getCurrentUserId();
+        Long userId = authContext.getCurrentUserId();
         if (userId == null) {
             throw new RuntimeException("未授权访问");
         }
@@ -55,7 +56,7 @@ public class PermissionAspect {
      */
     @Around("@annotation(requiresRole)")
     public Object checkRole(ProceedingJoinPoint joinPoint, RequiresRole requiresRole) throws Throwable {
-        Long userId = securityContext.getCurrentUserId();
+        Long userId = authContext.getCurrentUserId();
         if (userId == null) {
             throw new RuntimeException("未授权访问");
         }

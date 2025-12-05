@@ -10,9 +10,10 @@ import lombok.Data;
  * @author Auto U2A Polit Team
  * @version 1.0.0
  */
-@Data
 @Schema(description = "认证事件")
 public class AuthenticationEvent {
+    
+    // 手动添加getter方法
     
     @NotBlank(message = "事件类型不能为空")
     @Schema(description = "事件类型", example = "LOGIN_SUCCESS", required = true)
@@ -59,4 +60,12 @@ public class AuthenticationEvent {
     
     @Schema(description = "事件元数据")
     private String metadata;
+    
+    public String getUserId() {
+        return userId;
+    }
+    
+    public String getEventType() {
+        return eventType;
+    }
 }

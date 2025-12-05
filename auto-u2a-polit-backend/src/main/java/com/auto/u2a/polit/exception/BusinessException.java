@@ -24,4 +24,9 @@ public class BusinessException extends RuntimeException {
         super(message, cause);
         this.code = code;
     }
+    
+    // 手动添加getCode()方法
+    public int getCode() {
+        return code;
+    }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import java.util.Collections;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -46,6 +47,9 @@ public class OAuth2AccessToken {
     @Column(name = "issued_at", nullable = false)
     private LocalDateTime issuedAt;
     
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+    
     @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
     
@@ -68,6 +72,9 @@ public class OAuth2AccessToken {
     @JdbcTypeCode(SqlTypes.JSON)
     private String metadata;
     
+    @Column(name = "revoked")
+    private Boolean revoked = false;
+    
     /**
      * 检查访问令牌是否过期
      */
@@ -80,6 +87,79 @@ public class OAuth2AccessToken {
      */
     public boolean isRefreshTokenExpired() {
         return refreshTokenExpiresAt != null && LocalDateTime.now().isAfter(refreshTokenExpiresAt);
+    }
+    
+    // 手动添加getter和setter方法
+    public UUID getUserId() {
+        return userId;
+    }
+    
+    public void setTokenValue(String tokenValue) {
+        this.tokenValue = tokenValue;
+    }
+    
+    public void setRefreshToken(String refreshToken) {
+        this.refreshTokenValue = refreshToken;
+    }
+    
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+    
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+    
+    public String getUserIdAsString() {
+        return userId != null ? userId.toString() : "";
+    }
+    
+    public Set<String> getScopes() {
+        return scopes;
+    }
+    
+    public String getScope() {
+        return scopes != null ? String.join(" ", scopes) : "";
+    }
+    
+    public void setRevoked(boolean revoked) {
+        this.revoked = revoked;
+    }
+    
+    public boolean isRevoked() {
+        return revoked;
+    }
+    
+    public String getClientId() {
+        return clientId;
+    }
+    
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+    
+    public void setScope(String scope) {
+        if (scope != null) {
+            this.scopes = Set.of(scope.split(" "));
+        } else {
+            this.scopes = Collections.emptySet();
+        }
+    }
+    
+    public void setExpiresAt(LocalDateTime expiresAt) {
+        this.expiresAt = expiresAt;
+    }
+    
+    public void setRefreshExpiresAt(LocalDateTime refreshExpiresAt) {
+        this.refreshTokenExpiresAt = refreshExpiresAt;
+    }
+    
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
     
     /**

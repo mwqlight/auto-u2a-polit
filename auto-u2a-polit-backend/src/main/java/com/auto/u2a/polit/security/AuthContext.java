@@ -15,9 +15,12 @@ import java.util.Map;
  * 认证上下文
  * 管理多种认证策略，实现全协议认证中心
  */
-@Slf4j
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Component
 public class AuthContext {
+    private static final Logger log = LoggerFactory.getLogger(AuthContext.class);
     
     private final Map<AuthProtocol, AuthStrategy> strategies = new HashMap<>();
     
@@ -115,5 +118,14 @@ public class AuthContext {
     public boolean supportsRefresh(AuthProtocol protocol) {
         AuthStrategy strategy = getStrategy(protocol);
         return strategy.supportsRefresh();
+    }
+    
+    /**
+     * 获取当前用户ID
+     */
+    public Long getCurrentUserId() {
+        // TODO: 实现获取当前用户ID的逻辑
+        // 暂时返回null，需要根据实际情况实现
+        return null;
     }
 }

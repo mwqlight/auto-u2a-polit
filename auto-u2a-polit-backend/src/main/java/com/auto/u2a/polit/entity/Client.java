@@ -48,22 +48,22 @@ public class Client {
     
     /** 重定向URI列表（JSON数组格式） */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "redirect_uris", columnDefinition = "jsonb")
+    @Column(name = "redirect_uris", columnDefinition = "json")
     private String redirectUris;
     
     /** 客户端设置（JSON格式） */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "settings", columnDefinition = "jsonb")
+    @Column(name = "settings", columnDefinition = "json")
     private String settings;
     
     /** 授权类型：AUTHORIZATION_CODE, CLIENT_CREDENTIALS, PASSWORD, REFRESH_TOKEN */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "authorization_grant_types", columnDefinition = "jsonb")
+    @Column(name = "authorization_grant_types", columnDefinition = "json")
     private String authorizationGrantTypes;
     
     /** 作用域列表（JSON数组格式） */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "scopes", columnDefinition = "jsonb")
+    @Column(name = "scopes", columnDefinition = "json")
     private String scopes;
     
     /** 客户端状态：ACTIVE-激活，INACTIVE-未激活，REVOKED-吊销 */
@@ -96,7 +96,7 @@ public class Client {
     
     /** 元数据信息 */
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "metadata", columnDefinition = "jsonb")
+    @Column(name = "metadata", columnDefinition = "json")
     private String metadata;
     
     public enum ClientStatus {

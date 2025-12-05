@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 
 import java.util.Map;
 
@@ -14,7 +13,6 @@ import java.util.Map;
  * @author Auto U2A Polit Team
  * @version 1.0.0
  */
-@Data
 @Schema(description = "租户创建请求")
 public class TenantCreateRequest {
     
@@ -23,11 +21,21 @@ public class TenantCreateRequest {
     @Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "租户代码只能包含字母、数字、下划线和连字符")
     @Schema(description = "租户代码", example = "tenant001", required = true)
     private String code;
+
+    // 手动添加getCode()方法
+    public String getCode() {
+        return code;
+    }
     
     @NotBlank(message = "租户名称不能为空")
     @Size(max = 100, message = "租户名称长度不能超过100个字符")
     @Schema(description = "租户名称", example = "示例租户", required = true)
     private String name;
+
+    // 手动添加getName()方法
+    public String getName() {
+        return name;
+    }
     
     @Size(max = 500, message = "租户描述长度不能超过500个字符")
     @Schema(description = "租户描述", example = "这是一个示例租户")

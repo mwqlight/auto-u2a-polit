@@ -1,5 +1,7 @@
 package com.auto.u2a.polit.security;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.auto.u2a.polit.dto.request.LoginRequest;
 import com.auto.u2a.polit.dto.response.ApiResponse;
 import com.auto.u2a.polit.dto.response.LoginResponse;
@@ -8,7 +10,6 @@ import com.auto.u2a.polit.enums.AuthProtocol;
 import com.auto.u2a.polit.service.UserService;
 import com.auto.u2a.polit.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +24,9 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class PasswordAuthStrategy implements AuthStrategy {
+    
+    // 手动添加log变量
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PasswordAuthStrategy.class);
     
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
